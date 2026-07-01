@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7c3aed">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Constância">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%237c3aed'/%3E%3Ctext x='90' y='128' font-size='96' text-anchor='middle'%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
+<title>Constância 6 Meses — Rastreador Gamificado</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f6f4fb;
+  --card:#ffffff;
+  --ink:#241b33;
+  --muted:#7a7290;
+  --line:#ece7f5;
+  --primary:#7c3aed;
+  --primary-soft:#efe7fe;
+  --teal:#0ea5a4;
+  --amber:#f59e0b;
+  --pink:#ec4899;
+  --green:#16a34a;
+  --shadow:0 6px 22px rgba(60,30,110,.08);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased; padding:18px;
+}
+.wrap{max-width:920px;margin:0 auto}
+h1{font-size:22px;margin:0 0 2px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px}
+.row{display:flex;gap:14px;flex-wrap:wrap}
+.row>*{flex:1;min-width:0}
+
+/* tabs */
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;text-align:center;padding:12px;border-radius:14px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:600;font-size:15px;color:var(--muted);transition:.2s}
+.tab.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:var(--shadow)}
+
+/* Header hero */
+.hero{background:linear-gradient(135deg,#7c3aed 0%,#a855f7 55%,#ec4899 100%);color:#fff;border:none}
+.hero .lvl{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.badge{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:26px;flex:0 0 auto}
+.lvl h2{margin:0;font-size:18px}
+.lvl .tit{opacity:.9;font-size:13px}
+.xpbar{height:12px;border-radius:8px;background:rgba(255,255,255,.25);margin-top:12px;overflow:hidden}
+.xpbar>i{display:block;height:100%;background:#fff;border-radius:8px;transition:width .5s}
+.xpmeta{display:flex;justify-content:space-between;font-size:12px;opacity:.92;margin-top:6px}
+.flame{font-size:15px;background:rgba(0,0,0,.15);padding:6px 12px;border-radius:999px;display:inline-flex;gap:6px;align-items:center;margin-left:auto}
+
+/* date selector */
+.datebar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.datebar .d{font-weight:600}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--ink)}
+.chip:hover{background:var(--primary-soft)}
+.chip.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+
+/* habits / tasks */
+.habit{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:14px;margin-bottom:10px;transition:.2s;cursor:pointer;background:#fff}
+.habit:hover{border-color:#d9ccf5}
+.habit.done{background:linear-gradient(90deg,#f0fdf4,#ffffff);border-color:#bbf7d0}
+.hicon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex:0 0 auto}
+.habit .txt{flex:1}
+.habit .txt b{display:block;font-size:15px}
+.habit .txt span{font-size:12px;color:var(--muted)}
+.check{width:30px;height:30px;border-radius:50%;border:2px solid #cbb7ef;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;flex:0 0 auto;transition:.2s}
+.habit.done .check{background:var(--green);border-color:var(--green)}
+.perfect{text-align:center;font-size:13px;color:var(--green);font-weight:600;margin-top:4px;min-height:18px}
+
+/* stats */
+.stat{background:#faf8ff;border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center}
+.stat .n{font-size:24px;font-weight:700}
+.stat .l{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+/* goals */
+.goal{margin-bottom:14px}
+.goal:last-child{margin-bottom:0}
+.goal .top{display:flex;justify-content:space-between;align-items:center;font-size:14px;margin-bottom:6px}
+.goal .top b{font-weight:600}
+.pbar{height:14px;border-radius:8px;background:var(--line);overflow:hidden}
+.pbar>i{display:block;height:100%;border-radius:8px;transition:width .5s}
+.mini{font-size:12px;color:var(--muted)}
+input[type=number]{width:96px;border:1px solid var(--line);border-radius:8px;padding:5px 8px;font-size:13px}
+
+/* rewards */
+.reward{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);border-radius:12px;margin-bottom:9px;opacity:.55;transition:.25s}
+.reward.on{opacity:1;border-color:#fcd34d;background:linear-gradient(90deg,#fffbeb,#ffffff)}
+.reward .rico{width:38px;height:38px;border-radius:10px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:19px;flex:0 0 auto}
+.reward.on .rico{background:#fef3c7}
+.reward .rtx{flex:1;min-width:0}
+.reward .rtx b{font-size:13.5px;display:block}
+.reward .rtx input{width:100%;border:none;border-bottom:1px dashed #d9ccf5;background:transparent;font-size:13px;color:var(--ink);padding:3px 0}
+.reward .rtx input:focus{outline:none;border-bottom-color:var(--primary)}
+.reward .lock{font-size:12px;color:var(--muted);flex:0 0 auto}
+.claimbtn{border:1px solid var(--amber);background:#fff;color:#b45309;border-radius:999px;padding:5px 12px;font-size:12px;cursor:pointer;flex:0 0 auto}
+.claimbtn.claimed{background:var(--amber);color:#fff}
+
+/* heatmap */
+.heat{display:flex;flex-wrap:wrap;gap:3px}
+.cell{width:15px;height:15px;border-radius:4px;background:#e5e7eb;cursor:pointer;transition:.15s}
+.cell:hover{outline:2px solid var(--primary)}
+.cell.today{outline:2px solid var(--ink)}
+.cell.sel{outline:2px solid var(--pink)}
+.legend{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:10px;flex-wrap:wrap}
+.legend .cell{cursor:default}
+.section-h{font-size:15px;font-weight:700;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+.hint{font-size:12px;color:var(--muted);margin-top:4px}
+.footer{text-align:center;font-size:12px;color:var(--muted);margin:10px 0 30px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;box-shadow:var(--shadow);opacity:0;transition:.35s;z-index:50;max-width:88%}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.linkbtn{background:none;border:none;color:var(--primary);font-size:12px;cursor:pointer;text-decoration:underline;padding:0}
+
+/* casa */
+.casa-hero{background:linear-gradient(135deg,#0ea5a4 0%,#22c55e 100%);color:#fff;border:none}
+.casa-hero .em{font-size:34px}
+.casa-hero h2{margin:6px 0 2px;font-size:20px}
+.casa-hero p{margin:0;opacity:.92;font-size:13px}
+.week{display:flex;flex-direction:column;gap:8px}
+.wrow{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:.2s;background:#fff}
+.wrow:hover{border-color:#9fe3d8}
+.wrow.today{border-color:var(--teal);background:#f0fdfa}
+.wrow.sel{outline:2px solid var(--teal)}
+.wd{width:44px;font-weight:700;font-size:13px;color:var(--teal);flex:0 0 auto}
+.wrow input.rn{flex:1;border:none;background:transparent;font-size:14.5px;font-weight:600;color:var(--ink);border-bottom:1px dashed transparent;padding:2px 0}
+.wrow input.rn:focus{outline:none;border-bottom-color:var(--teal)}
+.wtag{font-size:11px;color:var(--muted);flex:0 0 auto}
+.tk{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff;transition:.15s}
+.tk.done{background:linear-gradient(90deg,#f0fdf4,#fff);border-color:#bbf7d0}
+.tk .box{width:26px;height:26px;border-radius:8px;border:2px solid #a7d8cf;display:flex;align-items:center;justify-content:center;color:#fff;flex:0 0 auto;cursor:pointer;transition:.15s}
+.tk.done .box{background:var(--green);border-color:var(--green)}
+.tk .lbl{flex:1;font-size:14px}
+.tk.done .lbl{color:var(--muted);text-decoration:line-through}
+.tk .del{border:none;background:none;color:#c9b7e0;cursor:pointer;font-size:16px;flex:0 0 auto}
+.tk .del:hover{color:var(--pink)}
+.addbar{display:flex;gap:8px;margin-top:6px}
+.addbar input{flex:1;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px}
+.addbar button{border:none;background:var(--teal);color:#fff;border-radius:10px;padding:0 16px;font-size:14px;cursor:pointer;font-weight:600}
+.editor{border:1px dashed #a7d8cf;border-radius:14px;padding:14px;margin-top:12px;background:#f7fdfc}
+.donebtn{width:100%;border:none;background:var(--teal);color:#fff;border-radius:12px;padding:12px;font-size:15px;font-weight:700;cursor:pointer;margin-top:6px}
+.donebtn.ok{background:var(--green)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>🔥 Desafio Constância — 6 Meses</h1>
+  <p class="sub">01/07/2026 → 31/12/2026 · pequenas metas, todos os dias, rumo aos 10k</p>
+
+  <div class="tabs">
+    <div class="tab active" id="tabBtnInicio" onclick="switchTab('inicio')">🔥 Constância</div>
+    <div class="tab" id="tabBtnCasa" onclick="switchTab('casa')">🧹 Casa</div>
+  </div>
+
+  <!-- ================= TAB INÍCIO ================= -->
+  <div id="tabInicio">
+
+    <!-- HERO / LEVEL -->
+    <div class="card hero">
+      <div class="lvl">
+        <div class="badge" id="lvlIcon">🌱</div>
+        <div>
+          <div class="tit" id="lvlTitle">Nível 1 · Iniciante</div>
+          <h2 id="lvlLine">0 XP acumulados</h2>
+        </div>
+        <div class="flame">🔥 <span id="streakNum">0</span> dias seguidos</div>
+      </div>
+      <div class="xpbar"><i id="xpFill" style="width:0%"></i></div>
+      <div class="xpmeta"><span id="xpNow">Nível 1</span><span id="xpNext">faltam 100 XP p/ nível 2</span></div>
+    </div>
+
+    <!-- HEATMAP -->
+    <div class="card">
+      <div class="section-h">📆 Mapa de constância</div>
+      <div class="hint" style="margin-bottom:10px">Cada quadradinho é um dia. Clique em qualquer dia para marcar/ajustar (útil se esquecer de marcar no dia).</div>
+      <div class="heat" id="heat"></div>
+      <div class="legend">
+        <div class="cell" style="background:#e5e7eb"></div> nada feito
+        &nbsp; <div class="cell" style="background:#fbbf24"></div> algumas tarefas
+        &nbsp; <div class="cell" style="background:#16a34a"></div> tudo feito
+        &nbsp;·&nbsp; <span class="cell today"></span> hoje &nbsp; <span class="cell sel"></span> selecionado
+      </div>
+    </div>
+
+    <!-- DATE SELECTOR + HABITS -->
+    <div class="card">
+      <div class="datebar">
+        <span class="d" id="selDateLabel">Hoje</span>
+        <button class="chip" id="todayBtn" onclick="goToday()">Ir para hoje</button>
+        <span class="mini" id="dayOfChallenge"></span>
+      </div>
+      <div id="habits"></div>
+      <div class="perfect" id="perfectMsg"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="row">
+      <div class="stat"><div class="n" id="stDays">0</div><div class="l">dias cumpridos</div></div>
+      <div class="stat"><div class="n" id="stRate">0%</div><div class="l">constância</div></div>
+      <div class="stat"><div class="n" id="stBest">0</div><div class="l">melhor sequência</div></div>
+      <div class="stat"><div class="n" id="stPerfect">0</div><div class="l">dias perfeitos</div></div>
+    </div>
+
+    <!-- BIG GOALS -->
+    <div class="card">
+      <div class="section-h">🎯 Metas grandes</div>
+
+      <div class="goal">
+        <div class="top"><b>📱 Seguidores</b><span><input type="number" id="folNow" min="0" onchange="setFollowers()"> / 10.000</span></div>
+        <div class="pbar"><i id="folBar" style="width:0%;background:linear-gradient(90deg,#ec4899,#f59e0b)"></i></div>
+        <div class="mini" id="folMini">Atualize seu número atual de seguidores</div>
+      </div>
+
+      <div class="goal">
+        <div class="top"><b>⚖️ Peso</b>
+          <span>de <input type="number" id="wStart" min="0" step="0.1" onchange="setWeight()" title="peso inicial"> →
+          <input type="number" id="wNow" min="0" step="0.1" onchange="setWeight()" title="peso atual"> →
+          <input type="number" id="wGoal" min="0" step="0.1" onchange="setWeight()" title="meta"> kg</span>
+        </div>
+        <div class="pbar"><i id="wBar" style="width:0%;background:linear-gradient(90deg,#0ea5a4,#16a34a)"></i></div>
+        <div class="mini" id="wMini">Preencha peso inicial, atual e meta (-10 kg)</div>
+      </div>
+
+      <div class="goal">
+        <div class="top"><b>📅 Desafio de 6 meses</b><span id="challNums">0 / 184 dias</span></div>
+        <div class="pbar"><i id="challBar" style="width:0%;background:linear-gradient(90deg,#7c3aed,#a855f7)"></i></div>
+        <div class="mini" id="challMini"></div>
+      </div>
+    </div>
+
+    <!-- REWARDS -->
+    <div class="card">
+      <div class="section-h">🏆 Recompensas por marco <span class="hint" style="margin-left:auto">edite cada recompensa do seu jeito</span></div>
+      <div id="rewards"></div>
+    </div>
+
+  </div>
+
+  <!-- ================= TAB CASA ================= -->
+  <div id="tabCasa" hidden>
+
+    <div class="card casa-hero">
+      <div class="em">🧹</div>
+      <h2 id="casaToday">Foco de hoje</h2>
+      <p id="casaSub">Um cômodo por dia — sem faxina gigante, só constância.</p>
+    </div>
+
+    <!-- checklist de hoje -->
+    <div class="card">
+      <div class="section-h">✅ Tarefas de hoje <span class="hint" id="casaProg" style="margin-left:auto"></span></div>
+      <div id="casaTasks"></div>
+      <button class="donebtn" id="casaDoneBtn" onclick="finishRoom()">Concluir faxina de hoje ✓</button>
+      <div class="hint" style="text-align:center;margin-top:8px">Ao concluir, o hábito <b>Casa</b> do dia é marcado automaticamente 🎉</div>
+    </div>
+
+    <!-- plano da semana -->
+    <div class="card">
+      <div class="section-h">🗓️ Plano da semana <span class="hint" style="margin-left:auto">clique num dia para editar o cômodo e as tarefas</span></div>
+      <div class="week" id="week"></div>
+      <div class="editor" id="casaEditor" hidden></div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Tudo é salvo automaticamente neste dispositivo · <button class="linkbtn" onclick="resetAll()">reiniciar dados</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------- CONFIG ---------- */
+const START = "2026-07-01";
+const END   = "2026-12-31";
+const XP_PER_HABIT = 10;
+const XP_PERFECT_BONUS = 20;
+
+const HABITS = [
+  {id:"neg",  icon:"💼", color:"#7c3aed", name:"Negócio: 1 tarefa-chave", desc:"Uma ação que move o negócio hoje"},
+  {id:"casa", icon:"🧹", color:"#0ea5a4", name:"Casa: cômodo do dia", desc:"A faxina rotativa da aba Casa"},
+  {id:"peso", icon:"🏋️", color:"#16a34a", name:"Peso: treino + registro", desc:"Mexer o corpo e registrar comida/água"},
+  {id:"post", icon:"📱", color:"#ec4899", name:"Conteúdo: 1 post ou engajamento", desc:"Alimentar o crescimento até 10k"},
+];
+
+const LEVELS = [
+  {t:"Iniciante", icon:"🌱"},{t:"Aprendiz", icon:"🌿"},{t:"Consistente", icon:"⭐"},
+  {t:"Dedicada", icon:"💪"},{t:"Disciplinada", icon:"🔥"},{t:"Imparável", icon:"🚀"},
+  {t:"Mestre da Constância", icon:"👑"},{t:"Lenda", icon:"🏆"},
+];
+const LVL_XP = [0,120,320,620,1050,1650,2500,3800];
+
+const DEFAULT_REWARDS = [
+  {d:3,icon:"☕",txt:"Um café especial / doce favorito"},
+  {d:7,icon:"🎬",txt:"Uma noite de filme sem culpa"},
+  {d:14,icon:"💅",txt:"Um mimo de autocuidado (unha, skincare...)"},
+  {d:21,icon:"📚",txt:"Comprar aquele livro ou curso que quero"},
+  {d:30,icon:"🍽️",txt:"Jantar fora no lugar que amo"},
+  {d:45,icon:"👗",txt:"Uma peça de roupa nova"},
+  {d:60,icon:"💆",txt:"Massagem ou dia de spa"},
+  {d:90,icon:"🎡",txt:"Um passeio ou day-use especial"},
+  {d:120,icon:"🎧",txt:"Um upgrade que desejo (fone, gadget...)"},
+  {d:150,icon:"✈️",txt:"Planejar uma viagem curta / bate-volta"},
+  {d:180,icon:"🏆",txt:"GRANDE recompensa: a viagem/presente dos sonhos"},
+];
+
+const WD_NAMES = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"];
+const WD_SHORT = ["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"];
+const WEEK_ORDER = [1,2,3,4,5,6,0]; // exibir Seg→Dom
+
+function defaultCasa(){
+  const mk=(wd,name,tasks)=>({name, tasks:tasks.map((t,i)=>({id:wd+"-"+i, txt:t}))});
+  return {
+    seq: 100,
+    rooms: {
+      1: mk(1,"Cozinha",       ["Lavar a louça","Limpar bancada e fogão","Tirar o lixo","Passar pano no chão"]),
+      2: mk(2,"Banheiros",     ["Limpar o vaso","Limpar pia e espelho","Trocar as toalhas","Passar pano no chão"]),
+      3: mk(3,"Quartos",       ["Arrumar as camas","Organizar/guardar roupas","Tirar o pó","Aspirar/varrer o chão"]),
+      4: mk(4,"Sala",          ["Organizar objetos soltos","Tirar pó dos móveis e TV","Aspirar o sofá","Varrer/passar pano"]),
+      5: mk(5,"Área de serviço",["Lavar e estender a roupa","Organizar produtos","Limpar o tanque","Varrer o chão"]),
+      6: mk(6,"Escritório / Home office",["Organizar a mesa","Arquivar papéis","Limpar tela e teclado","Planejar tarefas do negócio"]),
+      0: mk(0,"Dia leve + planejamento",["Organização geral rápida","Planejar cardápio da semana","Lista de compras","Preparar a semana"]),
+    },
+    checks: {} // { "2026-07-01": {taskId:true} }
+  };
+}
+
+/* ---------- STATE ---------- */
+const KEY = "benne_constancia_v1";
+let S = load();
+let selDate = todayISO();
+let selCasaWd = new Date().getDay();
+
+function load(){
+  let r=null;
+  try{ r = JSON.parse(localStorage.getItem(KEY)); }catch(e){}
+  if(!r) r = {};
+  if(!r.days) r.days={};
+  if(r.followers===undefined) r.followers=null;
+  if(r.wStart===undefined) r.wStart=null;
+  if(r.wNow===undefined) r.wNow=null;
+  if(r.wGoal===undefined) r.wGoal=null;
+  if(!r.rewards) r.rewards = DEFAULT_REWARDS.map(x=>({...x,claimed:false}));
+  if(!r.casa) r.casa = defaultCasa();
+  return r;
+}
+function save(){ localStorage.setItem(KEY, JSON.stringify(S)); }
+
+/* ---------- DATE HELPERS ---------- */
+function todayISO(){ return iso(new Date()); }
+function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function parse(s){ const [y,m,dd]=s.split("-").map(Number); return new Date(y,m-1,dd); }
+function addDays(s,n){ const d=parse(s); d.setDate(d.getDate()+n); return iso(d); }
+function daysBetween(a,b){ return Math.round((parse(b)-parse(a))/86400000); }
+function fmtBR(s){ const [y,m,d]=s.split("-"); return d+"/"+m+"/"+y; }
+
+/* ---------- CORE CALCS ---------- */
+function dayHabits(date){ return S.days[date] || {}; }
+function countDone(date){ const h=dayHabits(date); return HABITS.reduce((n,x)=>n+(h[x.id]?1:0),0); }
+function isFulfilled(date){ return countDone(date) >= 1; }
+function isPerfect(date){ return countDone(date) === HABITS.length; }
+function totalXP(){ let xp=0; for(const d in S.days){ const c=countDone(d); xp+=c*XP_PER_HABIT; if(c===HABITS.length) xp+=XP_PERFECT_BONUS; } return xp; }
+function levelFor(xp){ let lvl=1; for(let i=0;i<LVL_XP.length;i++){ if(xp>=LVL_XP[i]) lvl=i+1; } return Math.min(lvl,LEVELS.length); }
+function countFulfilled(){ let n=0; for(const d in S.days) if(isFulfilled(d)) n++; return n; }
+function countPerfect(){ let n=0; for(const d in S.days) if(isPerfect(d)) n++; return n; }
+function currentStreak(){ let n=0,cur=todayISO(); if(!isFulfilled(cur)) cur=addDays(cur,-1); while(isFulfilled(cur)){ n++; cur=addDays(cur,-1); if(daysBetween(START,cur)<0) break; } return n; }
+function bestStreak(){ let best=0,run=0,cur=START,end=todayISO(); if(daysBetween(cur,end)<0) return 0; while(daysBetween(cur,end)>=0){ if(isFulfilled(cur)){ run++; best=Math.max(best,run);} else run=0; cur=addDays(cur,1);} return best; }
+
+/* ---------- TABS ---------- */
+function switchTab(name){
+  const inicio = name==="inicio";
+  document.getElementById("tabInicio").hidden = !inicio;
+  document.getElementById("tabCasa").hidden = inicio;
+  document.getElementById("tabBtnInicio").classList.toggle("active",inicio);
+  document.getElementById("tabBtnCasa").classList.toggle("active",!inicio);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ---------- RENDER INÍCIO ---------- */
+function render(){
+  const xp=totalXP(), lvl=levelFor(xp), L=LEVELS[lvl-1];
+  document.getElementById("lvlIcon").textContent=L.icon;
+  document.getElementById("lvlTitle").textContent="Nível "+lvl+" · "+L.t;
+  document.getElementById("lvlLine").textContent=xp+" XP acumulados";
+  const base=LVL_XP[lvl-1]||0, next=LVL_XP[lvl]||null;
+  if(next){
+    const pct=Math.max(0,Math.min(100,(xp-base)/(next-base)*100));
+    document.getElementById("xpFill").style.width=pct+"%";
+    document.getElementById("xpNow").textContent="Nível "+lvl;
+    document.getElementById("xpNext").textContent="faltam "+(next-xp)+" XP p/ nível "+(lvl+1);
+  } else {
+    document.getElementById("xpFill").style.width="100%";
+    document.getElementById("xpNow").textContent="Nível máximo!";
+    document.getElementById("xpNext").textContent="🏆 Lenda da Constância";
+  }
+  document.getElementById("streakNum").textContent=currentStreak();
+
+  const isToday=selDate===todayISO();
+  document.getElementById("selDateLabel").textContent=isToday?("Hoje · "+fmtBR(selDate)):fmtBR(selDate);
+  const dnum=daysBetween(START,selDate)+1;
+  document.getElementById("dayOfChallenge").textContent=(dnum>=1&&daysBetween(selDate,END)>=0)?("Dia "+dnum+" de "+(daysBetween(START,END)+1)):"";
+
+  const h=dayHabits(selDate), cont=document.getElementById("habits"); cont.innerHTML="";
+  HABITS.forEach(x=>{
+    const done=!!h[x.id];
+    const el=document.createElement("div");
+    el.className="habit"+(done?" done":"");
+    el.onclick=()=>toggle(x.id);
+    el.innerHTML=`<div class="hicon" style="background:${x.color}22;color:${x.color}">${x.icon}</div>
+      <div class="txt"><b>${x.name}</b><span>${x.desc}</span></div>
+      <div class="check">${done?"✓":""}</div>`;
+    cont.appendChild(el);
+  });
+  const c=countDone(selDate), pm=document.getElementById("perfectMsg");
+  if(c===HABITS.length) pm.textContent="🎉 Dia perfeito! +"+(HABITS.length*XP_PER_HABIT+XP_PERFECT_BONUS)+" XP";
+  else if(c>0) pm.textContent=c+" de "+HABITS.length+" feitos · +"+(c*XP_PER_HABIT)+" XP";
+  else pm.textContent="";
+
+  document.getElementById("stDays").textContent=countFulfilled();
+  const elapsed=Math.min(daysBetween(START,todayISO())+1, daysBetween(START,END)+1);
+  document.getElementById("stRate").textContent=(elapsed>0?Math.round(countFulfilled()/elapsed*100):0)+"%";
+  document.getElementById("stBest").textContent=bestStreak();
+  document.getElementById("stPerfect").textContent=countPerfect();
+
+  renderGoals(); renderRewards(); renderHeat(); renderCasa(); save();
+}
+
+function renderGoals(){
+  const fn=document.getElementById("folNow");
+  if(document.activeElement!==fn) fn.value=S.followers??"";
+  const f=S.followers||0;
+  document.getElementById("folBar").style.width=Math.min(100,f/10000*100)+"%";
+  document.getElementById("folMini").textContent=f?(f.toLocaleString('pt-BR')+" de 10.000 · faltam "+Math.max(0,10000-f).toLocaleString('pt-BR')):"Atualize seu número atual de seguidores";
+
+  const ws=document.getElementById("wStart"),wn=document.getElementById("wNow"),wg=document.getElementById("wGoal");
+  if(document.activeElement!==ws) ws.value=S.wStart??"";
+  if(document.activeElement!==wn) wn.value=S.wNow??"";
+  if(document.activeElement!==wg) wg.value=S.wGoal??"";
+  if(S.wStart!=null&&S.wNow!=null&&S.wGoal!=null&&S.wStart!==S.wGoal){
+    const lost=S.wStart-S.wNow, total=S.wStart-S.wGoal;
+    document.getElementById("wBar").style.width=Math.max(0,Math.min(100,lost/total*100))+"%";
+    document.getElementById("wMini").textContent=(lost>=0?"−"+lost.toFixed(1):"+"+Math.abs(lost).toFixed(1))+" kg · faltam "+Math.max(0,(S.wNow-S.wGoal)).toFixed(1)+" kg p/ meta";
+  } else { document.getElementById("wBar").style.width="0%"; document.getElementById("wMini").textContent="Preencha peso inicial, atual e meta (-10 kg)"; }
+
+  const totalD=daysBetween(START,END)+1, done=countFulfilled();
+  document.getElementById("challNums").textContent=done+" / "+totalD+" dias";
+  document.getElementById("challBar").style.width=Math.min(100,done/totalD*100)+"%";
+  document.getElementById("challMini").textContent="Faltam "+Math.max(0,daysBetween(todayISO(),END))+" dias até 31/12 · mantenha a chama acesa 🔥";
+}
+
+function renderRewards(){
+  const best=bestStreak(), cont=document.getElementById("rewards"); cont.innerHTML="";
+  S.rewards.forEach((r,i)=>{
+    const on=best>=r.d;
+    const el=document.createElement("div"); el.className="reward"+(on?" on":"");
+    el.innerHTML=`<div class="rico">${on?r.icon:"🔒"}</div>
+      <div class="rtx"><b>${r.d} dias seguidos</b>
+        <input value="${r.txt.replace(/"/g,'&quot;')}" data-i="${i}" placeholder="minha recompensa..."></div>`;
+    if(on){
+      const b=document.createElement("button");
+      b.className="claimbtn"+(r.claimed?" claimed":"");
+      b.textContent=r.claimed?"resgatada ✓":"resgatar";
+      b.onclick=()=>{ S.rewards[i].claimed=!S.rewards[i].claimed; render(); if(S.rewards[i].claimed) toast("🎁 Recompensa resgatada. Você merece!"); };
+      el.appendChild(b);
+    } else { const s=document.createElement("div"); s.className="lock"; s.textContent="faltam "+(r.d-best)+"d"; el.appendChild(s); }
+    cont.appendChild(el);
+  });
+  cont.querySelectorAll("input").forEach(inp=>{ inp.onchange=e=>{ S.rewards[+e.target.dataset.i].txt=e.target.value; save(); }; });
+}
+
+function renderHeat(){
+  const cont=document.getElementById("heat"); cont.innerHTML="";
+  const totalD=daysBetween(START,END)+1, t=todayISO();
+  const shades=["#e5e7eb","#fde68a","#fcd34d","#fbbf24","#16a34a"];
+  for(let i=0;i<totalD;i++){
+    const d=addDays(START,i), c=countDone(d);
+    const cell=document.createElement("div");
+    cell.className="cell"+(d===t?" today":"")+(d===selDate?" sel":"");
+    cell.style.background=shades[c];
+    cell.title=fmtBR(d)+" · "+c+"/"+HABITS.length+" feitos";
+    cell.onclick=()=>{ selDate=d; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+    cont.appendChild(cell);
+  }
+}
+
+/* ---------- RENDER CASA ---------- */
+function casaTasksDoneToday(){
+  const wd=new Date().getDay(), room=S.casa.rooms[wd], t=todayISO();
+  const chk=S.casa.checks[t]||{};
+  let done=0; room.tasks.forEach(tk=>{ if(chk[tk.id]) done++; });
+  return {done, total:room.tasks.length};
+}
+function renderCasa(){
+  const wdToday=new Date().getDay(), roomToday=S.casa.rooms[wdToday], t=todayISO();
+  document.getElementById("casaToday").textContent="Hoje é "+WD_NAMES[wdToday]+" · foco: "+roomToday.name;
+  document.getElementById("casaSub").textContent="Faça só o cômodo de hoje. Amanhã é outro. Assim a casa fica sempre em ordem.";
+
+  const chk=S.casa.checks[t]||{};
+  const cont=document.getElementById("casaTasks"); cont.innerHTML="";
+  roomToday.tasks.forEach(tk=>{
+    const done=!!chk[tk.id];
+    const el=document.createElement("div"); el.className="tk"+(done?" done":"");
+    const box=document.createElement("div"); box.className="box"; box.textContent=done?"✓":"";
+    box.onclick=()=>toggleCasaTask(tk.id);
+    const lbl=document.createElement("div"); lbl.className="lbl"; lbl.textContent=tk.txt;
+    lbl.onclick=()=>toggleCasaTask(tk.id);
+    el.appendChild(box); el.appendChild(lbl); cont.appendChild(el);
+  });
+  if(roomToday.tasks.length===0) cont.innerHTML='<div class="hint">Sem tarefas para hoje. Adicione no Plano da semana abaixo.</div>';
+
+  const p=casaTasksDoneToday();
+  document.getElementById("casaProg").textContent=p.done+"/"+p.total+" feitas";
+  const btn=document.getElementById("casaDoneBtn");
+  const allDone=p.total>0 && p.done===p.total;
+  const habitDone=!!(S.days[t]&&S.days[t].casa);
+  if(habitDone){ btn.textContent="Casa em dia hoje ✓"; btn.classList.add("ok"); }
+  else { btn.textContent="Concluir faxina de hoje ✓"; btn.classList.remove("ok"); }
+
+  // plano da semana
+  const wk=document.getElementById("week"); wk.innerHTML="";
+  WEEK_ORDER.forEach(wd=>{
+    const room=S.casa.rooms[wd];
+    const row=document.createElement("div");
+    row.className="wrow"+(wd===wdToday?" today":"")+(wd===selCasaWd?" sel":"");
+    row.onclick=(e)=>{ if(e.target.classList.contains("rn")) return; selCasaWd=(selCasaWd===wd?-1:wd); renderCasa(); };
+    const wdl=document.createElement("div"); wdl.className="wd"; wdl.textContent=WD_SHORT[wd];
+    const rn=document.createElement("input"); rn.className="rn"; rn.value=room.name;
+    rn.onclick=e=>e.stopPropagation();
+    rn.onchange=e=>{ S.casa.rooms[wd].name=e.target.value; save(); renderCasa(); };
+    const tag=document.createElement("div"); tag.className="wtag"; tag.textContent=room.tasks.length+" tarefas";
+    row.appendChild(wdl); row.appendChild(rn); row.appendChild(tag);
+    wk.appendChild(row);
+  });
+
+  const ed=document.getElementById("casaEditor");
+  if(selCasaWd>=0){
+    ed.hidden=false;
+    const room=S.casa.rooms[selCasaWd];
+    ed.innerHTML=`<div class="section-h" style="color:var(--teal)">✏️ ${WD_NAMES[selCasaWd]} · ${room.name}</div>`;
+    room.tasks.forEach(tk=>{
+      const el=document.createElement("div"); el.className="tk";
+      const lbl=document.createElement("input"); lbl.className="lbl"; lbl.value=tk.txt;
+      lbl.style.cssText="border:none;background:transparent;font-size:14px;flex:1";
+      lbl.onchange=e=>{ tk.txt=e.target.value; save(); };
+      const del=document.createElement("button"); del.className="del"; del.textContent="✕";
+      del.onclick=()=>{ room.tasks=room.tasks.filter(x=>x.id!==tk.id); save(); renderCasa(); };
+      el.appendChild(lbl); el.appendChild(del); ed.appendChild(el);
+    });
+    const add=document.createElement("div"); add.className="addbar";
+    const inp=document.createElement("input"); inp.placeholder="nova tarefa...";
+    inp.onkeydown=e=>{ if(e.key==="Enter") addTask(selCasaWd,inp); };
+    const b=document.createElement("button"); b.textContent="Adicionar"; b.onclick=()=>addTask(selCasaWd,inp);
+    add.appendChild(inp); add.appendChild(b); ed.appendChild(add);
+  } else { ed.hidden=true; ed.innerHTML=""; }
+}
+function addTask(wd,inp){
+  const v=inp.value.trim(); if(!v) return;
+  S.casa.seq++; S.casa.rooms[wd].tasks.push({id:"c"+S.casa.seq, txt:v});
+  inp.value=""; save(); renderCasa();
+}
+function toggleCasaTask(id){
+  const t=todayISO();
+  if(!S.casa.checks[t]) S.casa.checks[t]={};
+  if(S.casa.checks[t][id]) delete S.casa.checks[t][id]; else S.casa.checks[t][id]=true;
+  const p=casaTasksDoneToday();
+  if(p.total>0 && p.done===p.total){
+    if(!S.days[t]) S.days[t]={};
+    if(!S.days[t].casa){ S.days[t].casa=true; toast("🏠 Casa em dia! Hábito marcado ✓"); }
+  }
+  render();
+}
+function finishRoom(){
+  const t=todayISO();
+  if(!S.days[t]) S.days[t]={};
+  const was=!!S.days[t].casa;
+  S.days[t].casa=!was;
+  if(!S.days[t].casa) delete S.days[t].casa;
+  render();
+  toast(S.days[t]&&S.days[t].casa ? "🏠 Faxina de hoje concluída! +10 XP":"Hábito Casa desmarcado.");
+}
+
+/* ---------- ACTIONS INÍCIO ---------- */
+function toggle(id){
+  if(!S.days[selDate]) S.days[selDate]={};
+  const wasPerfect=isPerfect(selDate);
+  S.days[selDate][id]=!S.days[selDate][id];
+  if(!S.days[selDate][id]) delete S.days[selDate][id];
+  const nowPerfect=isPerfect(selDate);
+  render();
+  if(nowPerfect&&!wasPerfect) toast("🎉 Dia perfeito! Todos os 4 hábitos concluídos.");
+  else if(S.days[selDate]&&S.days[selDate][id]){ const st=currentStreak(); if(st>0&&selDate===todayISO()) toast("✅ Feito! Sequência: "+st+" dia"+(st>1?"s":"")+" 🔥"); }
+}
+function goToday(){ selDate=todayISO(); render(); }
+function setFollowers(){ const v=parseInt(document.getElementById("folNow").value); S.followers=isNaN(v)?null:v; render(); }
+function setWeight(){ const g=id=>{const v=parseFloat(document.getElemen
